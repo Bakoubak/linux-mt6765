@@ -297,6 +297,57 @@ static int boe_nv110wum_init(struct hx83102 *ctx)
 	return dsi_ctx.accum_err;
 };
 
+static int boe_tv101wxm_ll0_init(struct hx83102 *ctx)
+{
+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
+
+	/* data_array[0] = 0x00043902; data_array[1] = 0x2E1083B9; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xB9, 0x83, 0x10, 0x2E);
+
+	/* data_array[0] = 0x00110500; dsi_set_cmdq(data_array, 1, 1); */
+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+	mipi_dsi_msleep(&dsi_ctx, 120);
+
+	/* data_array[0] = 0x00033902; data_array[1] = 0x00000051; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x51, 0x00);
+
+	/* data_array[0] = 0x2C531500; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x53, 0x2C);
+
+	/* data_array[0] = 0x00053902; data_array[1] = 0xF00D04C9; data_array[2] = 0x00000000; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xC9, 0x04, 0x0D, 0xF0, 0x00);
+
+	/* data_array[0] = 0x01551500; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x01);
+	mipi_dsi_msleep(&dsi_ctx, 5);
+
+	/* Séquence longue d'initialisation Gamma / Registre magique 0x41 */
+	/* data_array[1] = 0x2C412DE4; data_array[2] = 0xA79F9F9F; ... */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x41, 
+		0xE4, 0x2D, 0x41, 0x2C, 
+		0x9F, 0x9F, 0x9F, 0xA7, 
+		0xA7, 0xA7, 0xC3, 0xC3, 
+		0xFF, 0xFF, 0xFF, 0x03, 
+		0x1E, 0x1E, 0x1E, 0x1E, 
+		0x00, 0x20);
+	mipi_dsi_msleep(&dsi_ctx, 10);
+
+	/* data_array[0] = 0x03BD1500; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xBD, 0x03);
+
+	/* data_array[0] = 0x04E41500; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE4, 0x04);
+
+	/* data_array[0] = 0x00BD1500; */
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xBD, 0x00);
+
+	/* data_array[0] = 0x00290500; */
+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+	mipi_dsi_msleep(&dsi_ctx, 120);
+
+	return dsi_ctx.accum_err;
+}
+
 static int csot_pna957qt1_1_init(struct hx83102 *ctx)
 {
 	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
@@ -809,6 +860,30 @@ static const struct hx83102_panel_desc boe_nv110wum_desc = {
 	.init = boe_nv110wum_init,
 };
 
+static const struct drm_display_mode boe_tv101wxm_ll0_default_mode = {
+         .clock = 71100,
+         .hdisplay = 800,
+         .hsync_start = 800 + 40,
+         .hsync_end = 800 + 40 + 20,
+         .htotal = 800 + 40 + 20 + 40,
+
+         .vdisplay = 1280,
+         .vsync_start = 1280 + 20,
+         .vsync_end = 1280 + 20 + 4,
+         .vtotal = 1280 + 20 + 4 + 12,
+
+         .type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+};
+
+static const struct hx83102_panel_desc boe_tv101wxm_ll0_desc = {
+        .modes = &boe_tv101wxm_ll0_default_mode,
+        .size = {
+                .width_mm = 217,
+                .height_mm = 136,
+        },
+        .init = boe_tv101wxm_ll0_init,
+};
+
 static const struct drm_display_mode csot_pna957qt1_1_default_mode = {
 	.clock = 177958,
 	.hdisplay = 1200,
@@ -1221,6 +1296,9 @@ static const struct of_device_id hx83102_of_match[] = {
 	},
 	{ .compatible = "holitech,htf065h045",
 	  .data = &holitech_htf065h045_desc
+	},
+	{ .compatible = "boe,tv101wxm-ll0",
+	  .data = &boe_tv101wxm_ll0_desc
 	},
 	{ /* sentinel */ }
 };
