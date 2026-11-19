@@ -18,6 +18,8 @@ properties:
       - enum:
           # Boe nv110wum-l60 11.0" WUXGA TFT LCD panel
           - boe,nv110wum-l60
+          # Boe tv101wxm-ll0 10.1" WXGA TFT LCD panel
+          - boe,tv101wxm-ll0
           # CSOT pna957qt1-1 10.95" WUXGA TFT LCD panel
           - csot,pna957qt1-1
           # Holitech HTF065H045 6.517" 720x1600 TFT LCD panel
