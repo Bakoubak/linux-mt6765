@@ -78,6 +78,11 @@ reserved-memory {
 		no-map;
 	};
 
+	tee_secmem: memory@7fc00000 {
+		reg = <0x00 0x7fc00000 0x00 0x200000>;
+		no-map;
+	};
+
 	sspm_reserved: memory@7ff00000 {
 		reg = <0x00 0x7ff00000 0x00 0xc0000>;
 		no-map;
