@@ -31,7 +31,7 @@ chosen {
 	#size-cells = <2>;
 	ranges;
 	stdout-path = "serial0:921600n8";
-	framebuffer0: framebuffer@7f150000 {
+	framebuffer0: framebuffer@7ee50000 {
 		compatible = "simple-framebuffer";
 		memory-region = <&framebuffer>;
 		width = <800>;
@@ -52,8 +52,8 @@ reserved-memory {
 	#size-cells = <0x02>;
 	ranges;
 
-	framebuffer: framebuffer_reserved@7f150000 {
-		reg = <0x00 0x7f150000 0x00 0xdb0000>;
+	framebuffer: framebuffer_reserved@7ee50000 {
+		reg = <0x00 0x7ee50000 0x00 0xdb0000>;
 		no-map;
 	};
 
